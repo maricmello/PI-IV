@@ -5,6 +5,7 @@ de todas as etapas sao diretamente comparaveis.
 """
 import numpy as np
 import pandas as pd
+import sklearn
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyRegressor
@@ -34,7 +35,7 @@ COLUNAS_COMPLETO = COLUNAS_PERFIL + [
     "anos_para_fim_contrato", "sem_info_contrato",
 ]
 
-# Modelagem final: cada conjunto acrescenta um bloco ao anterior
+# Modelagem final (006): cada conjunto acrescenta um bloco ao anterior
 PARTICIPACAO = ["participacao_minutos", "participacao_jogos", "participacao_gols_clube"]
 FORCA_CLUBE = ["pontos_por_jogo_clube", "saldo_gols_por_jogo_clube"]
 CLUBE = ["clube_temporada"]
@@ -57,7 +58,7 @@ BLOCOS = {
 
 
 # ---------------------------------------------------------------------------
-# Baseline 
+# Baseline (notebook 005)
 # ---------------------------------------------------------------------------
 class MedianaPorGrupo(BaseEstimator, RegressorMixin):
     """Preve a mediana do alvo no grupo do jogador.
@@ -118,11 +119,14 @@ def construir_modelos():
 
 
 # ---------------------------------------------------------------------------
-# Modelagem final 
+# Modelagem final (notebooks 006 e 007)
 # ---------------------------------------------------------------------------
 def _target_encoder():
-    # A semente vai no `cv` (validacao cruzada interna do TargetEncoder)
-    return TargetEncoder(target_type="continuous", cv=KFold(n_splits=5, shuffle=True, random_state=SEED))
+    # a partir do scikit-learn 1.9 a semente vai no cv
+    versao = tuple(int(x) for x in sklearn.__version__.split(".")[:2])
+    if versao >= (1, 9):
+        return TargetEncoder(target_type="continuous", cv=KFold(n_splits=5, shuffle=True, random_state=SEED))
+    return TargetEncoder(target_type="continuous", cv=5, shuffle=True, random_state=SEED)
 
 
 def _etapas_preparo(colunas, escalar):
