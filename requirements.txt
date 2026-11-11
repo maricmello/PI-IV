@@ -1,6 +1,17 @@
 # Python 3.12
+# Instalação: pip install -r requirements.txt
+
+# Dados e gráficos
 pandas==3.1.1
 numpy==2.5.4
 matplotlib==3.11.2
+
+# Modelagem
 scikit-learn==1.9.1
+joblib==1.6.0
+
+# Download dos dados 
 kagglehub==1.0.3
+
+# Rodar os notebooks
+ipykernel==7.4.0
